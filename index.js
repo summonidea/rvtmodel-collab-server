@@ -8,9 +8,15 @@ const port = 3000
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
+isRevitRunning = null
+
 const collabRequests = new Schema({
   folder_id: String,
   file_name: String,
+  is_running:{
+    type: Boolean,
+    default: false
+  },
   is_collaborated: {
     type: Boolean,
     default: false
@@ -26,18 +32,24 @@ app.get('/', (req, res) => {
 })
 
 app.post('/', async function (req, res) {
-  
-  console.log(req.body)
-  const data = new MyModel(req.body)
-  await data.save()
-  res.status(200).json("OK")
+  isRunning = await MyModel.findOne({is_running: true})
+  if (isRunning) {
+    console.log(req.body)
+    const data = new MyModel(req.body)
+    await data.save()
+  }
+  else {
+    const data = new MyModel(req.body)
+    data.is_running = true
+    await data.save()
 
-  // This command excecutes Revit by sending a command
-  exec('C: & cd "C:\\Program Files\\Autodesk\\Revit 2020" & start Revit.exe', (error, stdout, stderr) => {
-    if (error) console.log(`error: ${error.message}`);
-    if (stderr) console.log(`stderr: ${stderr}`);
-    console.log(`stdout: ${stdout}`);
-  });
+    exec('C: & cd "C:\\Program Files\\Autodesk\\Revit 2020" & start Revit.exe', (error, stdout, stderr) => {
+      if (error) console.log(`error: ${error.message}`);
+      if (stderr) console.log(`stderr: ${stderr}`);
+      console.log(`stdout: ${stdout}`);
+    });
+  }
+  res.status(200).json("OK")
 })
 
 const main = async () => {
