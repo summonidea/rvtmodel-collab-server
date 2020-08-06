@@ -8,7 +8,6 @@ const port = 3000
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-isRevitRunning = null
 
 const collabRequests = new Schema({
   folder_id: String,
