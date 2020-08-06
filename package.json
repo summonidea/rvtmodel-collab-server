@@ -1,7 +1,7 @@
 {
   "name": "rvtmodel-collab-server",
   "version": "1.0.0",
-  "description": "A server that receives request to upload Revit models to BIM 360",
+  "description": "An server that receives request to upload Revit models to BIM 360, for and educational and experimental purposes",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js"

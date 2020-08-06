@@ -9,10 +9,15 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const collabRequests = new Schema({
-  property: String,
+  folder_id: String,
+  file_name: String,
+  is_collaborated: {
+    type: Boolean,
+    default: false
+  }
 });
 
-const MyModel = mongoose.model('CollabRequests', collabRequests);
+const MyModel = mongoose.model('collabrequests', collabRequests);
 
 app.use(express.json())
 
@@ -21,13 +26,13 @@ app.get('/', (req, res) => {
 })
 
 app.post('/', async function (req, res) {
-
+  
   console.log(req.body)
   const data = new MyModel(req.body)
   await data.save()
   res.status(200).json("OK")
 
-  //This command excecutes Revit by sending a command
+  // This command excecutes Revit by sending a command
   exec('C: & cd "C:\\Program Files\\Autodesk\\Revit 2020" & start Revit.exe', (error, stdout, stderr) => {
     if (error) console.log(`error: ${error.message}`);
     if (stderr) console.log(`stderr: ${stderr}`);
@@ -36,9 +41,14 @@ app.post('/', async function (req, res) {
 })
 
 const main = async () => {
-  await mongoose.connect('mongodb://localhost/my_database', {
+    await mongoose.connect('mongodb://localhost/my_database', {
     useNewUrlParser: true,
     useUnifiedTopology: true
+  });
+  const db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'connection error:'));
+  db.once('open', function () {
+    console.log("mongoose open")
   });
 
   app.listen(port, () => {
